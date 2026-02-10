@@ -21,7 +21,8 @@ services:
       # - OPENAI_BASE_URL=https://api.openai.com/v1
     volumes:
       - hapi-data:/home/claude/.hapi
-      - ./projects:/home/claude/projects
+      # 工作目录：宿主机 ./data <-> 容器 /home/claude/data
+      - ./data:/home/claude/data
 
 volumes:
   hapi-data:
