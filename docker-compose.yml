@@ -1,0 +1,27 @@
+services:
+  hapi-runner:
+    build: .
+    image: ghcr.io/cherrylover/hapi-runner:latest
+    container_name: hapi-runner
+    restart: unless-stopped
+    environment:
+      # HAPI Runner
+      - HAPI_API_URL=https://your-hapi-server.example.com
+      - CLI_API_TOKEN=your-hapi-token
+
+      # Claude Code (Anthropic)
+      - ANTHROPIC_API_KEY=sk-ant-xxx
+      # 自定义 Anthropic API 地址，默认为官方地址，可改为代理或中转地址
+      # - ANTHROPIC_BASE_URL=https://api.anthropic.com
+
+      # Codex (OpenAI)
+      - OPENAI_API_KEY=sk-xxx
+      - CODEX_API_KEY=sk-xxx
+      # 自定义 OpenAI API 地址，默认为官方地址，可改为代理或中转地址
+      # - OPENAI_BASE_URL=https://api.openai.com/v1
+    volumes:
+      - hapi-data:/home/claude/.hapi
+      - ./projects:/home/claude/projects
+
+volumes:
+  hapi-data:
