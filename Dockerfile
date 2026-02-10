@@ -25,11 +25,12 @@ RUN ARCH=$(case "${TARGETARCH}" in \
     | tar -xz -C /usr/local/bin && \
     chmod +x /usr/local/bin/hapi
 
-# Create non-root user 'claude'
-RUN useradd -m -s /bin/bash claude
+# Create non-root user 'claude' with fixed uid/gid for volume permission consistency
+RUN groupadd -g 1000 claude && \
+    useradd -m -s /bin/bash -u 1000 -g 1000 claude
 
 # Create working directories
-RUN mkdir -p /home/claude/.hapi /home/claude/projects && \
+RUN mkdir -p /home/claude/.hapi /home/claude/data && \
     chown -R claude:claude /home/claude
 
 USER claude
