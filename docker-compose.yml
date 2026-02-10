@@ -1,10 +1,18 @@
 services:
   hapi-runner:
-    build: .
-    image: ghcr.io/cherrylover/hapi-runner:latest
+    # build: .
+    image: ghcr.io/cherrylover/hapi-docker:latest
     container_name: hapi-runner
     restart: unless-stopped
     environment:
+      # HAPI 运行模式：all = server + runner, server = 仅 server, 留空 = 仅 runner
+      # - HAPI_MODE=all
+
+      # HAPI Server 配置（HAPI_MODE=all 或 server 时需要）
+      # - HAPI_LISTEN_HOST=0.0.0.0
+      # - HAPI_LISTEN_PORT=3006
+      # - HAPI_PUBLIC_URL=https://your-hapi-server.example.com
+
       # HAPI Runner
       - HAPI_API_URL=https://your-hapi-server.example.com
       - CLI_API_TOKEN=your-hapi-token
@@ -15,14 +23,14 @@ services:
       # - ANTHROPIC_BASE_URL=https://api.anthropic.com
 
       # Codex (OpenAI)
-      - OPENAI_API_KEY=sk-xxx
-      - CODEX_API_KEY=sk-xxx
-      # 自定义 OpenAI API 地址，默认为官方地址，可改为代理或中转地址
-      # - OPENAI_BASE_URL=https://api.openai.com/v1
+      # Codex 配置详见 ~/.codex/config.toml，可通过 volume 挂载自定义配置
+      # - OPENAI_API_KEY=sk-xxx
     volumes:
-      - hapi-data:/home/claude/.hapi
+      - ./hapi-data:/home/claude/.hapi
       # 工作目录：宿主机 ./data <-> 容器 /home/claude/data
       - ./data:/home/claude/data
+      # Codex 配置文件（可选）
+      # - ./codex-config:/home/claude/.codex
 
 volumes:
   hapi-data:

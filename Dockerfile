@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Claude Code globally
-RUN npm install -g @anthropic-ai/claude-code  @openai/codex
+RUN npm install -g @anthropic-ai/claude-code @openai/codex
 
 # Download and install HAPI binary
 RUN ARCH=$(case "${TARGETARCH}" in \
@@ -33,11 +33,16 @@ RUN groupadd -g 1000 claude && \
 RUN mkdir -p /home/claude/.hapi /home/claude/data && \
     chown -R claude:claude /home/claude
 
+# Copy entrypoint script
+COPY --chown=claude:claude entrypoint.sh /home/claude/entrypoint.sh
+RUN chmod +x /home/claude/entrypoint.sh
+
 USER claude
 WORKDIR /home/claude
 
 # HAPI configuration via environment variables
 ENV HAPI_HOME=/home/claude/.hapi
 
-ENTRYPOINT ["hapi"]
-CMD ["runner", "start-sync"]
+EXPOSE 3006
+
+ENTRYPOINT ["/home/claude/entrypoint.sh"]
